@@ -1,4 +1,4 @@
-# similarity_hhsearch
+# Similarity hhsearch
 
 Script to construct a graph from .hhr file from a hhsearch analysis
 
