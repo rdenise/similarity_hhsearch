@@ -41,15 +41,15 @@ T3SS_sctS;T3SS sctS
 T3SS_sctT;T3SS sctT
 T3SS_sctU;T3SS sctU
 T3SS_sctV;T3SS sctV
-T4P_pilAE_test;T4P pilAE test
+T4P_pilAE_test;T4P pilAE
 T4P_pilB;T4P pilB
 T4P_pilC;T4P pilC
 T4P_pilD;T4P pilD
 T4P_pilI_pilV;T4P pilI pilV
 T4P_pilM;T4P pilM
-T4P_pilN_buen;T4P pilN buen
-T4P_pilO_buen;T4P pilO buen
-T4P_pilP_buen;T4P pilP buen
+T4P_pilN_buen;T4P pilN
+T4P_pilO_buen;T4P pilO
+T4P_pilP_buen;T4P pilP
 T4P_pilQ;T4P pilQ
 T4P_pilT_pilU;T4P pilT pilU
 T4SS_B_traE;T4SS B traE
