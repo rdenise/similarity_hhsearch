@@ -1,0 +1,212 @@
+Ark_FlaB_cut;Ark FlaB
+Ark_FlaF_cut;Ark FlaF
+Ark_FlaG_cut;Ark FlaG
+Ark_FlaH_cut;Ark FlaH
+Ark_FlaI_cut;Ark FlaI
+Ark_FlaJ_cut;Ark FlaJ
+Ark_FlaK_cut;Ark FlaK
+Ark_pil_align;Ark pil
+FLG_flgC;FLG flgC
+FLG_flhA_sctV;FLG flhA sctV
+FLG_flhB_sctU;FLG flhB sctU
+FLG_fliE;FLG fliE
+FLG_fliF_sctJ;FLG fliF sctJ
+FLG_fliI_sctN;FLG fliI sctN
+FLG_fliN-fliY_sctQ;FLG fliN-fliY sctQ
+FLG_fliP_sctR;FLG fliP sctR
+FLG_fliQ_sctS;FLG fliQ sctS
+FLG_fliR_sctT;FLG fliR sctT
+T1SS_abc;T1SS abc
+T1SS_mfp;T1SS mfp
+T1SS_omf;T1SS omf
+T2SS_gspC_tcoffee_aln;T2SS gspC
+T2SS_gspD_tcoffee_aln;T2SS gspD
+T2SS_gspE_tcoffee_aln;T2SS gspE
+T2SS_gspF_tcoffee_aln;T2SS gspF
+T2SS_gspG_tcoffee_aln;T2SS gspG
+T2SS_gspH_tcoffee_aln;T2SS gspH
+T2SS_gspI_tcoffee_aln;T2SS gspI
+T2SS_gspJ_tcoffee_aln;T2SS gspJ
+T2SS_gspK_tcoffee_aln;T2SS gspK
+T2SS_gspL_tcoffee_aln;T2SS gspL
+T2SS_gspM_tcoffee_aln;T2SS gspM
+T2SS_gspN;T2SS gspN
+T2SS_gspO_tcoffee_aln;T2SS gspO
+T3SS_sctC;T3SS sctC
+T3SS_sctJ;T3SS sctJ
+T3SS_sctN;T3SS sctN
+T3SS_sctQ;T3SS sctQ
+T3SS_sctR;T3SS sctR
+T3SS_sctS;T3SS sctS
+T3SS_sctT;T3SS sctT
+T3SS_sctU;T3SS sctU
+T3SS_sctV;T3SS sctV
+T4P_pilAE_test;T4P pilAE test
+T4P_pilB;T4P pilB
+T4P_pilC;T4P pilC
+T4P_pilD;T4P pilD
+T4P_pilI_pilV;T4P pilI pilV
+T4P_pilM;T4P pilM
+T4P_pilN_buen;T4P pilN buen
+T4P_pilO_buen;T4P pilO buen
+T4P_pilP_buen;T4P pilP buen
+T4P_pilQ;T4P pilQ
+T4P_pilT_pilU;T4P pilT pilU
+T4SS_B_traE;T4SS B traE
+T4SS_B_traF;T4SS B traF
+T4SS_B_traH;T4SS B traH
+T4SS_B_traI;T4SS B traI
+T4SS_B_traJ;T4SS B traJ
+T4SS_B_traK;T4SS B traK
+T4SS_B_traL;T4SS B traL
+T4SS_B_traM;T4SS B traM
+T4SS_B_traN;T4SS B traN
+T4SS_B_traO;T4SS B traO
+T4SS_B_traP;T4SS B traP
+T4SS_B_traQ;T4SS B traQ
+T4SS_C_alr7204;T4SS C alr7204
+T4SS_C_alr7205;T4SS C alr7205
+T4SS_C_alr7207;T4SS C alr7207
+T4SS_C_alr7208;T4SS C alr7208
+T4SS_C_alr7209;T4SS C alr7209
+T4SS_C_alr7210;T4SS C alr7210
+T4SS_C_alr7211;T4SS C alr7211
+T4SS_C_alr7212;T4SS C alr7212
+T4SS_F_traB;T4SS F traB
+T4SS_F_traE;T4SS F traE
+T4SS_F_traF;T4SS F traF
+T4SS_F_traG;T4SS F traG
+T4SS_F_traH;T4SS F traH
+T4SS_F_traK;T4SS F traK
+T4SS_F_traL;T4SS F traL
+T4SS_F_traN;T4SS F traN
+T4SS_F_traU;T4SS F traU
+T4SS_F_traV;T4SS F traV
+T4SS_F_traW;T4SS F traW
+T4SS_F_trbC;T4SS F trbC
+T4SS_G_tfc10;T4SS G tfc10
+T4SS_G_tfc11;T4SS G tfc11
+T4SS_G_tfc12;T4SS G tfc12
+T4SS_G_tfc13;T4SS G tfc13
+T4SS_G_tfc14;T4SS G tfc14
+T4SS_G_tfc15;T4SS G tfc15
+T4SS_G_tfc17;T4SS G tfc17
+T4SS_G_tfc18;T4SS G tfc18
+T4SS_G_tfc19;T4SS G tfc19
+T4SS_G_tfc2;T4SS G tfc2
+T4SS_G_tfc22;T4SS G tfc22
+T4SS_G_tfc23;T4SS G tfc23
+T4SS_G_tfc24;T4SS G tfc24
+T4SS_G_tfc3;T4SS G tfc3
+T4SS_G_tfc5;T4SS G tfc5
+T4SS_G_tfc7;T4SS G tfc7
+T4SS_G_tfc8;T4SS G tfc8
+T4SS_G_tfc9;T4SS G tfc9
+T4SS_I_traE;T4SS I traE
+T4SS_I_traI;T4SS I traI
+T4SS_I_traK;T4SS I traK
+T4SS_I_traL;T4SS I traL
+T4SS_I_traM;T4SS I traM
+T4SS_I_traN;T4SS I traN
+T4SS_I_traO;T4SS I traO
+T4SS_I_traP;T4SS I traP
+T4SS_I_traQ;T4SS I traQ
+T4SS_I_traR;T4SS I traR
+T4SS_I_traT;T4SS I traT
+T4SS_I_traV;T4SS I traV
+T4SS_I_traW;T4SS I traW
+T4SS_I_traY;T4SS I traY
+T4SS_I_trbA;T4SS I trbA
+T4SS_I_trbB;T4SS I trbB
+T4SS_MOBB;T4SS MOBB
+T4SS_MOBC;T4SS MOBC
+T4SS_MOBF;T4SS MOBF
+T4SS_MOBH;T4SS MOBH
+T4SS_MOBP1;T4SS MOBP1
+T4SS_MOBP2;T4SS MOBP2
+T4SS_MOBP3;T4SS MOBP3
+T4SS_MOBQ;T4SS MOBQ
+T4SS_MOBT;T4SS MOBT
+T4SS_MOBV;T4SS MOBV
+T4SS_T_virB1;T4SS T virB1
+T4SS_T_virB10;T4SS T virB10
+T4SS_T_virB11;T4SS T virB11
+T4SS_T_virB2;T4SS T virB2
+T4SS_T_virB3;T4SS T virB3
+T4SS_T_virB5;T4SS T virB5
+T4SS_T_virB6;T4SS T virB6
+T4SS_T_virB8;T4SS T virB8
+T4SS_T_virB9;T4SS T virB9
+T4SS_t4cp1;T4SS t4cp1
+T4SS_t4cp2;T4SS t4cp2
+T4SS_tcpA;T4SS tcpA
+T4SS_traU;T4SS traU
+T4SS_virb4;T4SS virb4
+T5aSS_PF03797;T5aSS PF03797
+T5bSS_t5bss-tranlocator_aln_edit;T5bSS t5bss-tranlocator
+T5cSS_PF03895;T5cSS PF03895
+T6SS_evpJ;T6SS evpJ
+T6SS_tssA;T6SS tssA
+T6SS_tssB;T6SS tssB
+T6SS_tssC;T6SS tssC
+T6SS_tssD;T6SS tssD
+T6SS_tssE;T6SS tssE
+T6SS_tssF;T6SS tssF
+T6SS_tssG;T6SS tssG
+T6SS_tssH;T6SS tssH
+T6SS_tssI;T6SS tssI
+T6SS_tssJ;T6SS tssJ
+T6SS_tssK;T6SS tssK
+T6SS_tssL;T6SS tssL
+T6SS_tssM;T6SS tssM
+T6SSii_dotU;T6SSii dotU
+T6SSii_iglA;T6SSii iglA
+T6SSii_iglB;T6SSii iglB
+T6SSii_iglC;T6SSii iglC
+T6SSii_iglD;T6SSii iglD
+T6SSii_iglE;T6SSii iglE
+T6SSii_iglF;T6SSii iglF
+T6SSii_iglG;T6SSii iglG
+T6SSii_iglH;T6SSii iglH
+T6SSii_iglI;T6SSii iglI
+T6SSii_iglJ;T6SSii iglJ
+T6SSii_pdpA;T6SSii pdpA
+T6SSii_pdpB;T6SSii pdpB
+T6SSii_pdpC;T6SSii pdpC
+T6SSii_pdpD;T6SSii pdpD
+T6SSii_pdpE;T6SSii pdpE
+T6SSii_vgrG;T6SSii vgrG
+T6SSiii_tssB;T6SSiii tssB
+T6SSiii_tssC;T6SSiii tssC
+T6SSiii_tssD;T6SSiii tssD
+T6SSiii_tssE;T6SSiii tssE
+T6SSiii_tssF;T6SSiii tssF
+T6SSiii_tssG;T6SSiii tssG
+T6SSiii_tssH;T6SSiii tssH
+T6SSiii_tssI;T6SSiii tssI
+T6SSiii_tssK;T6SSiii tssK
+T6SSiii_tssN;T6SSiii tssN
+T6SSiii_tssP;T6SSiii tssP
+T6SSiii_tssQ;T6SSiii tssQ
+T9SS_gldJ_TIGR03524;T9SS gldJ TIGR03524
+T9SS_gldK_TIGR03525;T9SS gldK TIGR03525
+T9SS_gldL_TIGR03513;T9SS gldL TIGR03513
+T9SS_gldM_TIGR03517;T9SS gldM TIGR03517
+T9SS_gldN_TIGR03523;T9SS gldN TIGR03523
+T9SS_porQ;T9SS porQ
+T9SS_porU;T9SS porU
+T9SS_porV;T9SS porV
+T9SS_sprA-2_PF12118;T9SS sprA-2 PF12118
+T9SS_sprA_PF14349;T9SS sprA PF14349
+T9SS_sprE;T9SS sprE
+T9SS_sprT;T9SS sprT
+Tad_flp;Tad flp
+Tad_rcpA;Tad rcpA
+Tad_tadA;Tad tadA
+Tad_tadB;Tad tadB
+Tad_tadC;Tad tadC
+Tad_tadD;Tad tadD
+Tad_tadE;Tad tadE
+Tad_tadF;Tad tadF
+Tad_tadV;Tad tadV
+Tad_tadZ;Tad tadZ

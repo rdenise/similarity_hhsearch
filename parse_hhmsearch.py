@@ -9,7 +9,10 @@
 ##########################################################################################
 ##########################################################################################
 
+import argparse
+from textwrap import dedent
 import sys, os
+import time
 import glob
 import pandas as pd
 import numpy as np
@@ -28,18 +31,38 @@ from matplotlib.backends.backend_pdf import PdfPages
 ##########################################################################################
 
 
-##########################################################################################
-##########################################################################################
-
-def read_hhr(hhr_file, dataframe):
+def create_folder(mypath):
 
 	"""
-	Function that read a .hhr and return write it in the pandas.Dataframe  
-	
-	:param hhr_file: the .hhr file that hhsearch write  
-	:type: str  
-	:param dataframe: the dataframe that we want to add the identities  
-	:type: pandas.Dataframe  
+	Created the folder that I need to store my result if it doesn't exist
+	:param mypath: path where I want the folder (write at the end of the path)
+	:type: string
+	:return: Nothing
+	"""
+
+	try:
+		os.makedirs(mypath)
+	except OSError:
+		pass
+
+	return
+
+##########################################################################################
+##########################################################################################
+
+def read_hhr_evalue(hhr_file, dataframe, dict_annotation):
+
+	"""
+	Function that read a .hhr and return write it in the pandas.Dataframe
+
+	:param hhr_file: the .hhr file that hhsearch write
+	:type: str
+	:param dataframe: the dataframe that we want to add the identities
+	:type: pandas.Dataframe
+	:param dict_annotation: name of the file that contain the name of the profiles before the first "." and the name you want to transform it.
+	:type: str
+	:return: the dataframe with the identities added
+	:rtype: pandas.Dataframe
 	"""
 
 	name=''
@@ -61,7 +84,7 @@ def read_hhr(hhr_file, dataframe):
 							dataframe.loc[name, name2] = int(Identities[11:-1])
 				name=''
 	return dataframe
-				
+
 
 
 
@@ -69,15 +92,19 @@ def read_hhr(hhr_file, dataframe):
 ##########################################################################################
 ##########################################################################################
 
-def read_hhr_pvalue(hhr_file, dataframe):
+def read_hhr_pvalue(hhr_file, dataframe, dict_annotation):
 
 	"""
-	Function that read a .hhr and return write it in the pandas.Dataframe and select the p-value instead of e-value  
-	
-	:param hhr_file: the .hhr file that hhsearch write  
-	:type: str  
-	:param dataframe: the dataframe that we want to add the identities  
+	Function that read a .hhr and return write it in the pandas.Dataframe and select the p-value instead of e-value
+
+	:param hhr_file: the .hhr file that hhsearch write
+	:type: str
+	:param dataframe: the dataframe that we want to add the identities
 	:type: pandas.Dataframe
+	:param dict_annotation: name of the file that contain the name of the profiles before the first "." and the name you want to transform it.
+	:type: str
+	:return: the dataframe with the identities added
+	:rtype: pandas.Dataframe
 	"""
 
 	tabular=False
@@ -100,7 +127,7 @@ def read_hhr_pvalue(hhr_file, dataframe):
 			elif '>' in line :
 				name= dict_annotation[line[1:].split(".")[0].split("_NB-0")[0]]
 			elif name!='' :
-				Probab, E_value, Score, Aligned_cols, Identities, Similarity, Sum_probs= line.split()
+				Probab, E_value, Score, Aligned_cols, Identities, Similarity, Sum_probs = line.split()
 				if dict_p_value[(name,name2)] <= 1e-3 :
 					if dataframe.loc[name, name2] == 0 :
 						if name == name2 :
@@ -110,29 +137,99 @@ def read_hhr_pvalue(hhr_file, dataframe):
 				name=''
 
 	return dataframe
-				
+
 ##########################################################################################
 ##########################################################################################
 
-def create_adjency_matrix(dict_annotation, file_hhr):
+def create_adjency_matrix(annotation_file, fileshhr, value):
 
 	"""
 	Function that create the adjency matrix (create a identity dataframe)
 
-	:param dict_annotation: dictionnary with the iformation from the annotation table 
+	:param fileshhr: the list of all the .hhr files.
+	:type: list of str
+	:param value: The name of the value (Pvalue or Evalue you want to use)
+	:type: str
+	:return: a dataframe with the information of the percentage of identity for all the profiles
+	:rtype: pandas.Dataframe
 	"""
+
+	info_for_dict = np.loadtxt(annotation_file, dtype="string", delimiter=";")
+	dict_annotation = {line[0]:line[1] for line in info_for_dict}
+
 	length = len(info_for_dict[:,1])
 	identity_df = pd.DataFrame(data=np.zeros((length, length), dtype=int), index=info_for_dict[:,1] ,columns=info_for_dict[:,1])
-	for fileHHR in files_hhr :
-		identity_df = read_hhr(fileHHR, identity_df)
-	
+
+	print("#################")
+	print("## Read HHR files")
+	print("#################")
+
+	progression=0
+
+	if value == "Evalue" :
+		for fileHHR in fileshhr :
+			progression+=1
+			sys.stdout.write("{:.2f}% : {}/{} sequences\r".format(progression/float(length)*100, progression, length))
+			sys.stdout.flush()
+
+			identity_df = read_hhr_evalue(fileHHR, identity_df, dict_annotation)
+	elif value == "Pvalue" :
+		for fileHHR in fileshhr :
+
+			progression+=1
+			sys.stdout.write("{:.2f}% : {}/{} sequences\r".format(progression/float(length)*100, progression, length))
+			sys.stdout.flush()
+
+			identity_df = read_hhr_pvalue(fileHHR, identity_df, dict_annotation)
+
+	print("Done !")
+
 	plt.figure()
 	plt.imshow(identity_df, interpolation='nearest')
-	plt.title("Identity matrix with all profiles")
+	plt.title("Identity matrix with all profiles using {}".format(value))
 	pdf.savefig()
 	plt.close()
-	
+
 	return identity_df
+
+##########################################################################################
+##########################################################################################
+
+def make_graph(identity_df, PATH_TO_RESULTS, value):
+
+	"""
+	Create the graph with the indentity dataframe that containt only the node with at least a number of degree of one.
+
+	:param identity_df: the dataframe with the identities added
+	:type: pandas.Dataframe
+	:param: path to the result folder
+	:type: str
+	:param value: The name of the value (Pvalue or Evalue you want to use)
+	:type: str
+	:return: Nothing
+	"""
+
+	graph = nx.from_numpy_matrix(identity_df.values)
+	graph = nx.relabel_nodes(graph, dict(enumerate(identity_df.columns)))
+	outdeg = graph.degree()
+	to_remove = [n for n in outdeg if outdeg[n] == 0]
+
+	print("#######################")
+	print("## All the node removed")
+	print("#######################")
+
+	print(to_remove)
+
+	graph.remove_nodes_from(to_remove)
+	nx.write_gml(graph, os.path.join(PATH_TO_RESULTS,'network_{}.gml'.format(value)))
+
+	plt.figure()
+	nx.draw_networkx(graph)
+	plt.title("Graph of the identity between the profiles using {}".format(value))
+	pdf.savefig()
+	plt.close()
+
+	return
 
 ##########################################################################################
 ##########################################################################################
@@ -141,110 +238,54 @@ def create_adjency_matrix(dict_annotation, file_hhr):
 ##
 ##########################################################################################
 ##########################################################################################
-# Analyse avec juste T2SS, T4P, Archaellum, Tad
+
+parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+     description=dedent("""
 
 
-files_hhr = glob.glob("/Users/rdenise/Documents/Analysis_similarity/result_hhsearch/*")
+-----------------------------------------
+
+  _   _ _   _ ____     ____                 _
+ | | | | | | |  _ \   / ___|_ __ __ _ _ __ | |__
+ | |_| | |_| | |_) | | |  _| '__/ _` | '_ \| '_ \\
+ |  _  |  _  |  _ <  | |_| | | | (_| | |_) | | | |
+ |_| |_|_| |_|_| \_\  \____|_|  \__,_| .__/|_| |_|
+                                     |_|
 
 
+-----------------------------------------
+""") )
 
-info_for_dict = np.loadtxt("/Users/rdenise/Documents/Analysis_similarity/annotation_list.txt", dtype="string", delimiter=";")
-dict_annotation = {line[0]:line[1] for line in info_for_dict}
-
-
-with PdfPages("All_graph.pdf") as pdf :
-
-
-
-
-graph = nx.from_numpy_matrix(identity_df.values)
-graph = nx.relabel_nodes(graph, dict(enumerate(identity_df.columns)))
-outdeg = graph.degree()
-to_remove = [n for n in outdeg if outdeg[n] == 0]
-print(to_remove)
-graph.remove_nodes_from(to_remove)
-nx.write_gml(graph, '/Users/rdenise/Documents/Analysis_similarity/network.gml')
+general_option = parser.add_argument_group(title = "General input dataset options")
+general_option.add_argument("-hhr",'--hhrfolder',
+ 							required=True,
+							metavar="<path>",
+							dest="HHRFolder",
+							help="Path to the HHR result folder")
+general_option.add_argument("-o",'--output',
+ 							default=None,
+							dest="output",
+							metavar='<path>',
+							help="Using <path> for output files (default: HHRFolder directory)")
 
 
-
-nx.draw_networkx(graph)
-
+args = parser.parse_args()
 
 
-length = len(info_for_dict[:,1])
-identity_df_pvalue = pd.DataFrame(data=np.zeros((length, length), dtype=int), index=info_for_dict[:,1] ,columns=info_for_dict[:,1])
-for fileHHR in files_hhr :
-	identity_df_pvalue = read_hhr_pvalue(fileHHR, identity_df_pvalue)
-plt.imshow(identity_df_pvalue, interpolation='nearest')
+files_hhr = glob.glob(os.path.join(args.HHRFolder,"*"))
 
+if args.output :
+	PATH_TO_RESULTS=os.path.join(args.output, "results")
+else :
+	PATH_TO_RESULTS=(args.HHRFolder, "results")
 
+create_folder(PATH_TO_RESULTS)
 
-graph = nx.from_numpy_matrix(identity_df_pvalue.values)
-graph = nx.relabel_nodes(graph, dict(enumerate(identity_df_pvalue.columns)))
-outdeg = graph.degree()
-to_remove = [n for n in outdeg if outdeg[n] == 0]
-print(to_remove)
-graph.remove_nodes_from(to_remove)
-nx.write_gml(graph, '/Users/rdenise/Documents/Analysis_similarity/network_pvalue.gml')
+with PdfPages(os.path.join(PATH_TO_RESULTS,"All_graph.pdf")) as pdf :
+		# NOTE using Evalue
+		identity_DF=create_adjency_matrix(dict_annotation, files_hhr, "Evalue")
+		make_graph(identity_DF, PATH_TO_RESULTS, "Evalue")
 
-
-
-nx.draw_networkx(graph)
-
-
-
-files_hhr_less = glob.glob("/Users/rdenise/Documents/Analysis_similarity/result_hhsearch_less_T4SS/*")
-
-
-
-info_for_dict2 = np.loadtxt("/Users/rdenise/Documents/Analysis_similarity/annotation_list2.txt", dtype="string", delimiter=";")
-dict_annotation2 = {line[0]:line[1] for line in info_for_dict2}
-
-
-
-length = len(info_for_dict2[:,1])
-identity_df2 = pd.DataFrame(data=np.zeros((length, length), dtype=int), index=info_for_dict2[:,1] ,columns=info_for_dict2[:,1])
-for fileHHR in files_hhr_less :
-	identity_df2 = read_hhr(fileHHR, identity_df2)
-plt.imshow(identity_df2, interpolation='nearest')
-
-
-
-graph = nx.from_numpy_matrix(identity_df2.values)
-graph = nx.relabel_nodes(graph, dict(enumerate(identity_df2.columns)))
-outdeg = graph.degree()
-to_remove = [n for n in outdeg if outdeg[n] == 0]
-print(to_remove)
-graph.remove_nodes_from(to_remove)
-nx.write_gml(graph, '/Users/rdenise/Documents/Analysis_similarity/network2.gml')
-
-
-
-nx.draw_networkx(graph)
-
-
-
-length = len(info_for_dict2[:,1])
-identity_df_pvalue2 = pd.DataFrame(data=np.zeros((length, length), dtype=int), index=info_for_dict2[:,1] ,columns=info_for_dict2[:,1])
-for fileHHR in files_hhr_less :
-	identity_df_pvalue2 = read_hhr_pvalue(fileHHR, identity_df_pvalue2)
-plt.imshow(identity_df_pvalue2, interpolation='nearest')
-
-
-
-graph = nx.from_numpy_matrix(identity_df_pvalue2.values)
-graph = nx.relabel_nodes(graph, dict(enumerate(identity_df_pvalue2.columns)))
-outdeg = graph.degree()
-to_remove = [n for n in outdeg if outdeg[n] == 0]
-print(to_remove)
-graph.remove_nodes_from(to_remove)
-nx.write_gml(graph, '/Users/rdenise/Documents/Analysis_similarity/network_pvalue2.gml')
-
-
-
-nx.draw_networkx(graph)
-
-
-
-
-
+		# NOTE using Pvalue
+		identity_DF=create_adjency_matrix(dict_annotation, files_hhr, "Pvalue")
+		make_graph(identity_DF, PATH_TO_RESULTS, "Pvalue")
