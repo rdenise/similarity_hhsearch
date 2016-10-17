@@ -70,10 +70,10 @@ def read_hhr_evalue(hhr_file, dataframe, dict_annotation):
 	with open(hhr_file, 'r') as hhr :
 		for line in hhr :
 			if first_line:
-				name2=dict_annotation[line.split()[1].split("_NB-0")[0].split(".")[0]]
+				name2 = dict_annotation[line.split()[1].split("_NB-0")[0].split(".")[0][:30]]
 				first_line=False
 			if '>' in line :
-				name= dict_annotation[line[1:].split(".")[0].split("_NB-0")[0]]
+				name = dict_annotation[line.rstrip()[1:].split(".")[0].split("_NB-0")[0][:30]]
 			elif name!='' :
 				Probab, E_value, Score, Aligned_cols, Identities, Similarity, Sum_probs= line.split()
 				if float(E_value[8:]) <= 1e-3 :
@@ -114,18 +114,19 @@ def read_hhr_pvalue(hhr_file, dataframe, dict_annotation):
 	with open(hhr_file, 'r') as hhr :
 		for line in hhr :
 			if first_line:
-				name2=dict_annotation[line.split()[1].split("_NB-0")[0].split(".")[0]]
+				name2=dict_annotation[line.split()[1].split("_NB-0")[0].split(".")[0][:30]]
 				first_line=False
 			if "No Hit" in line :
 				tabular = True
 			elif "\n" == line :
 				tabular = False
 			elif tabular :
-				name1 = dict_annotation[line.split()[1].split(".")[0].split("_NB-0")[0]]
+				# NOTE Si nom trop long probleme
+				name1 = dict_annotation[line.split()[1].split(".")[0].split("_NB-0")[0][:30]]
 				if (name1,name2) not in dict_p_value :
 					dict_p_value[(name1,name2)] = float(line.split()[4])
 			elif '>' in line :
-				name= dict_annotation[line[1:].split(".")[0].split("_NB-0")[0]]
+				name = dict_annotation[line.rstrip()[1:].split(".")[0].split("_NB-0")[0][:30]]
 			elif name!='' :
 				Probab, E_value, Score, Aligned_cols, Identities, Similarity, Sum_probs = line.split()
 				if dict_p_value[(name,name2)] <= 1e-3 :
@@ -154,8 +155,8 @@ def create_adjency_matrix(annotation_file, fileshhr, value):
 	:rtype: pandas.Dataframe
 	"""
 
-	info_for_dict = np.loadtxt(annotation_file, dtype="string", delimiter=";")
-	dict_annotation = {line[0]:line[1] for line in info_for_dict}
+	info_for_dict = np.genfromtxt(annotation_file, dtype=str, delimiter=";")
+	dict_annotation = {line[0][:30]:line[1] for line in info_for_dict}
 
 	length = len(info_for_dict[:,1])
 	identity_df = pd.DataFrame(data=np.zeros((length, length), dtype=int), index=info_for_dict[:,1] ,columns=info_for_dict[:,1])
@@ -182,6 +183,7 @@ def create_adjency_matrix(annotation_file, fileshhr, value):
 
 			identity_df = read_hhr_pvalue(fileHHR, identity_df, dict_annotation)
 
+	print()
 	print("Done !")
 
 	plt.figure()
@@ -262,6 +264,11 @@ general_option.add_argument("-hhr",'--hhrfolder',
 							metavar="<path>",
 							dest="HHRFolder",
 							help="Path to the HHR result folder")
+general_option.add_argument("-a",'--annotationFile',
+ 							required=True,
+							metavar="<file>",
+							dest="annotFile",
+							help="File with the information about the annotations")
 general_option.add_argument("-o",'--output',
  							default=None,
 							dest="output",
@@ -283,9 +290,9 @@ create_folder(PATH_TO_RESULTS)
 
 with PdfPages(os.path.join(PATH_TO_RESULTS,"All_graph.pdf")) as pdf :
 		# NOTE using Evalue
-		identity_DF=create_adjency_matrix(dict_annotation, files_hhr, "Evalue")
+		identity_DF=create_adjency_matrix(args.annotFile, files_hhr, "Evalue")
 		make_graph(identity_DF, PATH_TO_RESULTS, "Evalue")
 
 		# NOTE using Pvalue
-		identity_DF=create_adjency_matrix(dict_annotation, files_hhr, "Pvalue")
+		identity_DF=create_adjency_matrix(args.annotFile, files_hhr, "Pvalue")
 		make_graph(identity_DF, PATH_TO_RESULTS, "Pvalue")
