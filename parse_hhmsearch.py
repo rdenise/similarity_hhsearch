@@ -74,7 +74,7 @@ def create_dict_length_profile(hhr_files, dict_annotation):
 					dict_length[name] = float(line.split()[1])
 				else :
 					break
-
+	#print(dict_length)
 	return dict_length
 
 ##########################################################################################
@@ -112,6 +112,8 @@ def read_hhr_evalue(hhr_file, dataframe, dict_annotation, dict_length, MIN_COVER
 				Probab, E_value, Score, Aligned_cols, Identities, Similarity, Sum_probs= line.split()
 				minimum_length = min(dict_length[name],dict_length[name2])
 				coverage = float(Aligned_cols.split("=")[1])/minimum_length
+				#print("Pour {} contre {} j'ai un maximum de {} pour un minimum de {} avec une longueur de {} donc des coverage comme suit :".format(name2, name, max(dict_length[name],dict_length[name2]), minimum_length, float(Aligned_cols.split("=")[1])))
+				#print("Ma protéine actuel est {} contre {} avec une p-value de {} et un coverage minimum de {} et maximum de {} pour un pourcentage d'identité de {}".format(name2, name, float(E_value[8:]), coverage, float(Aligned_cols.split("=")[1])/max(dict_length[name],dict_length[name2]), int(Identities[11:-1])))
 				if float(E_value[8:]) <= 1e-3 and coverage > MIN_COVERAGE:
 					if dataframe.loc[name, name2] == 0 :
 						if name == name2 :
@@ -167,6 +169,8 @@ def read_hhr_pvalue(hhr_file, dataframe, dict_annotation, dict_length, MIN_COVER
 				Probab, E_value, Score, Aligned_cols, Identities, Similarity, Sum_probs = line.split()
 				minimum_length = min(dict_length[name],dict_length[name2])
 				coverage = float(Aligned_cols.split("=")[1])/minimum_length
+				#print("Pour {} contre {} j'ai un maximum de {} pour un minimum de {} avec une longueur de {} donc des coverage comme suit :".format(name2, name, max(dict_length[name],dict_length[name2]), minimum_length, float(Aligned_cols.split("=")[1])))
+				#print("Ma protéine actuel est {} contre {} avec une p-value de {} et un coverage minimum de {} et maximum de {} pour un pourcentage d'identité de {}".format(name2, name, dict_p_value[(name,name2)], coverage, float(Aligned_cols.split("=")[1])/max(dict_length[name],dict_length[name2]), int(Identities[11:-1])))
 				if dict_p_value[(name,name2)] <= 1e-3 and coverage > MIN_COVERAGE:
 					if dataframe.loc[name, name2] == 0 :
 						if name == name2 :
@@ -202,13 +206,14 @@ def create_adjency_matrix(dict_annotation, fileshhr, value, dict_length, coverag
 	length = len(info_for_dict[:,1])
 	identity_df = pd.DataFrame(data=np.zeros((length, length), dtype=int), index=info_for_dict[:,1] ,columns=info_for_dict[:,1])
 
-	print("#################")
+	print("\n#################")
 	print("## Read HHR files")
-	print("#################")
+	print("#################\n")
 
 	progression=0
 
 	if value == "Evalue" :
+		#print("-----------\n|Evalue\n-----------\n")
 		for fileHHR in fileshhr :
 			progression+=1
 			sys.stdout.write("{:.2f}% : {}/{} sequences\r".format(progression/float(length)*100, progression, length))
@@ -216,8 +221,8 @@ def create_adjency_matrix(dict_annotation, fileshhr, value, dict_length, coverag
 
 			identity_df = read_hhr_evalue(fileHHR, identity_df, dict_annotation, dict_length, coverage_min)
 	elif value == "Pvalue" :
+		#print("-----------\n|Pvalue\n-----------\n")
 		for fileHHR in fileshhr :
-
 			progression+=1
 			sys.stdout.write("{:.2f}% : {}/{} sequences\r".format(progression/float(length)*100, progression, length))
 			sys.stdout.flush()
@@ -259,9 +264,9 @@ def make_graph(identity_df, PATH_TO_RESULTS, value, coverage):
 	outdeg = graph.degree()
 	to_remove = [n for n in outdeg if outdeg[n] == 0]
 
-	print("#######################")
+	print("\n#######################")
 	print("## All the node removed")
-	print("#######################")
+	print("#######################\n")
 
 	print(to_remove)
 
@@ -328,7 +333,7 @@ general_option.add_argument("-c",'--coverage_min',
 args = parser.parse_args()
 
 
-files_hhr = glob.glob(os.path.join(args.HHRFolder,"*"))
+files_hhr = glob.glob(os.path.join(args.HHRFolder,"*hhr"))
 
 if args.output :
 	PATH_TO_RESULTS=os.path.join(args.output, "results")
@@ -345,7 +350,7 @@ DICT_LENGTH = create_dict_length_profile(files_hhr, DICT_ANNOTATION)
 if args.coverage_min :
 	COVERAGE = args.coverage_min
 else :
-	COVERAGE = 0.8
+	COVERAGE = 0
 
 with PdfPages(os.path.join(PATH_TO_RESULTS,"All_graph.pdf")) as pdf :
 		# NOTE using Evalue
