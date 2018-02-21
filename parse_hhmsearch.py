@@ -203,8 +203,8 @@ def create_adjency_matrix(dict_annotation, fileshhr, value, dict_length, coverag
 	:rtype: pandas.Dataframe
 	"""
 
-	length = len(info_for_dict[:,1])
-	identity_df = pd.DataFrame(data=np.zeros((length, length), dtype=int), index=info_for_dict[:,1] ,columns=info_for_dict[:,1])
+	length = len(fileshhr)
+	identity_df = pd.DataFrame(data=np.zeros((length, length), dtype=int), index=dict_annotation.keys() ,columns=dict_annotation.keys())
 
 	print("\n#################")
 	print("## Read HHR files")
@@ -213,18 +213,18 @@ def create_adjency_matrix(dict_annotation, fileshhr, value, dict_length, coverag
 	progression=0
 
 	if value == "Evalue" :
-		#print("-----------\n|Evalue\n-----------\n")
+		print("-----------\n|Evalue\n-----------\n")
 		for fileHHR in fileshhr :
 			progression+=1
-			sys.stdout.write("{:.2f}% : {}/{} sequences\r".format(progression/float(length)*100, progression, length))
+			sys.stdout.write("{:.2f}% : {}/{} files\r".format(progression/float(length)*100, progression, length))
 			sys.stdout.flush()
 
 			identity_df = read_hhr_evalue(fileHHR, identity_df, dict_annotation, dict_length, coverage_min)
 	elif value == "Pvalue" :
-		#print("-----------\n|Pvalue\n-----------\n")
+		print("-----------\n|Pvalue\n-----------\n")
 		for fileHHR in fileshhr :
 			progression+=1
-			sys.stdout.write("{:.2f}% : {}/{} sequences\r".format(progression/float(length)*100, progression, length))
+			sys.stdout.write("{:.2f}% : {}/{} files\r".format(progression/float(length)*100, progression, length))
 			sys.stdout.flush()
 
 			identity_df = read_hhr_pvalue(fileHHR, identity_df, dict_annotation, dict_length, coverage_min)
@@ -268,6 +268,8 @@ def make_graph(identity_df, PATH_TO_RESULTS, value, coverage):
 	print("## All the node removed")
 	print("#######################\n")
 
+	print("There is {} profiles removed".format(len(to_remove)))
+	print()
 	print(to_remove)
 
 	graph.remove_nodes_from(to_remove)
@@ -313,7 +315,7 @@ general_option.add_argument("-hhr",'--hhrfolder',
 							dest="HHRFolder",
 							help="Path to the HHR result folder")
 general_option.add_argument("-a",'--annotationFile',
- 							required=True,
+ 							required=False,
 							metavar="<file>",
 							dest="annotFile",
 							help="File with the information about the annotations")
@@ -342,8 +344,11 @@ else :
 
 create_folder(PATH_TO_RESULTS)
 
-info_for_dict = np.genfromtxt(args.annotFile, dtype=str, delimiter=";")
-DICT_ANNOTATION = {line[0][:30]:line[1] for line in info_for_dict}
+if args.annotFile :
+	info_for_dict = np.genfromtxt(args.annotFile, dtype=str, delimiter=";")
+	DICT_ANNOTATION = {line[0][:30]:line[1] for line in info_for_dict}
+else :
+	DICT_ANNOTATION = {os.path.basename(hhr).replace(".hhr", ""):os.path.basename(hhr).replace(".hhr", "") for hhr in files_hhr}
 
 DICT_LENGTH = create_dict_length_profile(files_hhr, DICT_ANNOTATION)
 
