@@ -204,7 +204,8 @@ def create_adjency_matrix(dict_annotation, fileshhr, value, dict_length, coverag
 	"""
 
 	length = len(fileshhr)
-	identity_df = pd.DataFrame(data=np.zeros((length, length), dtype=int), index=dict_annotation.keys() ,columns=dict_annotation.keys())
+
+	identity_df = pd.DataFrame(data=np.zeros((length, length), dtype=int), index=dict_annotation.values() ,columns=dict_annotation.values())
 
 	print("\n#################")
 	print("## Read HHR files")
@@ -243,7 +244,7 @@ def create_adjency_matrix(dict_annotation, fileshhr, value, dict_length, coverag
 ##########################################################################################
 ##########################################################################################
 
-def make_graph(identity_df, PATH_TO_RESULTS, value, coverage):
+def make_graph(identity_df, PATH_TO_RESULTS, value, coverage, data_to_add, data_frame_definition):
 
 	"""
 	Create the graph with the indentity dataframe that containt only the node with at least a number of degree of one.
@@ -262,7 +263,11 @@ def make_graph(identity_df, PATH_TO_RESULTS, value, coverage):
 	graph = nx.from_numpy_matrix(identity_df.values)
 	graph = nx.relabel_nodes(graph, dict(enumerate(identity_df.columns)))
 	outdeg = graph.degree()
-	to_remove = [n for n in outdeg if outdeg[n] == 0]
+	
+	#for n in outdeg :
+	#		print(n)
+	
+	to_remove = [n[0] for n in outdeg if outdeg[n[0]] == 0]
 
 	print("\n#######################")
 	print("## All the node removed")
@@ -273,7 +278,14 @@ def make_graph(identity_df, PATH_TO_RESULTS, value, coverage):
 	print(to_remove)
 
 	graph.remove_nodes_from(to_remove)
-	nx.write_gml(graph, os.path.join(PATH_TO_RESULTS,'network_{}_{}.gml'.format(value, coverage)))
+	
+	data_frame_definition = data_frame_definition[~data_frame_definition.new_name.isin(to_remove)].set_index("new_name")
+
+
+	for data in data_to_add:
+		nx.set_node_attributes(graph, data_frame_definition[data].to_dict(), data)
+
+	nx.write_graphml(graph, os.path.join(PATH_TO_RESULTS,'network_{}_1e-3_coverage_{}.graphml'.format(value, int(coverage*100))))
 
 	plt.figure()
 	nx.draw_networkx(graph)
@@ -330,6 +342,12 @@ general_option.add_argument("-c",'--coverage_min',
 							type=float,
 							metavar='<COVERAGE_MIN>',
 							help="The minimum coverage for the alignmenent in the results (between 0 and 1)")
+general_option.add_argument("-add", "--add_data",
+							default=None,
+							dest="addcolumns",
+							metavar="<COLUMN_NAME>",
+							nargs="+",
+							help="columns added in the definition file that you want to be add in the network information")
 
 
 args = parser.parse_args()
@@ -345,8 +363,13 @@ else :
 create_folder(PATH_TO_RESULTS)
 
 if args.annotFile :
-	info_for_dict = np.genfromtxt(args.annotFile, dtype=str, delimiter=";")
-	DICT_ANNOTATION = {line[0][:30]:line[1] for line in info_for_dict}
+	info_for_dict = pd.read_csv(args.annotFile, sep=",",index_col=0)
+	name_hhr_file = [os.path.basename(hhr).replace(".hhr", "") for hhr in files_hhr]
+	info_for_dict = info_for_dict[info_for_dict.index.isin(name_hhr_file)]
+	# JE relis mon code le 20180322 et je n'ai aucune idee de pourquoi line[0][:30] peut-être parce que hhsearch coupe le nom mais pas de verification
+	info_for_dict.index = [x[:30] for x in info_for_dict.index]
+	DICT_ANNOTATION = info_for_dict.new_name.to_dict()                                                                                                                 
+
 else :
 	DICT_ANNOTATION = {os.path.basename(hhr).replace(".hhr", ""):os.path.basename(hhr).replace(".hhr", "") for hhr in files_hhr}
 
@@ -360,8 +383,8 @@ else :
 with PdfPages(os.path.join(PATH_TO_RESULTS,"All_graph.pdf")) as pdf :
 		# NOTE using Evalue
 		identity_DF=create_adjency_matrix(DICT_ANNOTATION, files_hhr, "Evalue", DICT_LENGTH, COVERAGE)
-		make_graph(identity_DF, PATH_TO_RESULTS, "Evalue", COVERAGE)
+		make_graph(identity_DF, PATH_TO_RESULTS, "Evalue", COVERAGE, args.addcolumns, info_for_dict)
 
 		# NOTE using Pvalue
 		identity_DF=create_adjency_matrix(DICT_ANNOTATION, files_hhr, "Pvalue", DICT_LENGTH, COVERAGE)
-		make_graph(identity_DF, PATH_TO_RESULTS, "Pvalue", COVERAGE)
+		make_graph(identity_DF, PATH_TO_RESULTS, "Pvalue", COVERAGE, args.addcolumns, info_for_dict)
