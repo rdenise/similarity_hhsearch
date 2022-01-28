@@ -112,8 +112,8 @@ def read_hhr_evalue(hhr_file, dataframe, dict_annotation, dict_length, MIN_COVER
 				Probab, E_value, Score, Aligned_cols, Identities, Similarity, Sum_probs= line.split()
 				minimum_length = min(dict_length[name],dict_length[name2])
 				coverage = float(Aligned_cols.split("=")[1])/minimum_length
-				#print("Pour {} contre {} j'ai un maximum de {} pour un minimum de {} avec une longueur de {} donc des coverage comme suit :".format(name2, name, max(dict_length[name],dict_length[name2]), minimum_length, float(Aligned_cols.split("=")[1])))
-				#print("Ma protéine actuel est {} contre {} avec une p-value de {} et un coverage minimum de {} et maximum de {} pour un pourcentage d'identité de {}".format(name2, name, float(E_value[8:]), coverage, float(Aligned_cols.split("=")[1])/max(dict_length[name],dict_length[name2]), int(Identities[11:-1])))
+				#print(For {} VS {} I have a maximum of {} and a minimum of {} with a length of {} so coverage is:".format(name2, name, max(dict_length[name],dict_length[name2]), minimum_length, float(Aligned_cols.split("=")[1])))
+				#print("My protein is {} VS {} with a e-value of {} and a minimum coverage of {} and a maximum of {} for a percentage of identity of {}".format(name2, name, float(E_value[8:]), coverage, float(Aligned_cols.split("=")[1])/max(dict_length[name],dict_length[name2]), int(Identities[11:-1])))
 				if float(E_value[8:]) <= 1e-3 and coverage > MIN_COVERAGE:
 					if dataframe.loc[name, name2] == 0 :
 						if name == name2 :
@@ -169,8 +169,8 @@ def read_hhr_pvalue(hhr_file, dataframe, dict_annotation, dict_length, MIN_COVER
 				Probab, E_value, Score, Aligned_cols, Identities, Similarity, Sum_probs = line.split()
 				minimum_length = min(dict_length[name],dict_length[name2])
 				coverage = float(Aligned_cols.split("=")[1])/minimum_length
-				#print("Pour {} contre {} j'ai un maximum de {} pour un minimum de {} avec une longueur de {} donc des coverage comme suit :".format(name2, name, max(dict_length[name],dict_length[name2]), minimum_length, float(Aligned_cols.split("=")[1])))
-				#print("Ma protéine actuel est {} contre {} avec une p-value de {} et un coverage minimum de {} et maximum de {} pour un pourcentage d'identité de {}".format(name2, name, dict_p_value[(name,name2)], coverage, float(Aligned_cols.split("=")[1])/max(dict_length[name],dict_length[name2]), int(Identities[11:-1])))
+				#print("For {} VS {} I have a maximum of {} and a minimum of {} with a length of {} so coverage is:".format(name2, name, max(dict_length[name],dict_length[name2]), minimum_length, float(Aligned_cols.split("=")[1])))
+				#print("My protein is {} VS {} with a p-value of {} and a minimum coverage of {} and a maximum of {} for a percentage of identity of {}".format(name2, name, dict_p_value[(name,name2)], coverage, float(Aligned_cols.split("=")[1])/max(dict_length[name],dict_length[name2]), int(Identities[11:-1])))
 				if dict_p_value[(name,name2)] <= 1e-3 and coverage > MIN_COVERAGE:
 					if dataframe.loc[name, name2] == 0 :
 						if name == name2 :
@@ -366,7 +366,7 @@ if args.annotFile :
 	info_for_dict = pd.read_csv(args.annotFile, sep=",",index_col=0)
 	name_hhr_file = [os.path.basename(hhr).replace(".hhr", "") for hhr in files_hhr]
 	info_for_dict = info_for_dict[info_for_dict.index.isin(name_hhr_file)]
-	# JE relis mon code le 20180322 et je n'ai aucune idee de pourquoi line[0][:30] peut-être parce que hhsearch coupe le nom mais pas de verification
+	# I read my code on 20180322 and I have no clue why line[0][:30] maybe hhsearch cut the name but need verification
 	info_for_dict.index = [x[:30] for x in info_for_dict.index]
 	DICT_ANNOTATION = info_for_dict.new_name.to_dict()                                                                                                                 
 
